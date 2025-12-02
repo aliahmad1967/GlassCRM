@@ -4,15 +4,15 @@ import { Lead } from '../types';
 import { MoreHorizontal, Plus, Settings2, Trash2, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { useLeads } from '../context/LeadsContext';
 import { usePipeline } from '../context/PipelineContext';
-import { AddLeadModal } from '../components/AddLeadModal';
+import { useUI } from '../context/UIContext';
 import { Tooltip } from '../components/Tooltip';
 
 export const Pipeline: React.FC = () => {
   const { leads, updateLead } = useLeads();
   const { stages, addStage, updateStage, deleteStage, reorderStage } = usePipeline();
+  const { openAddLeadModal } = useUI();
   
   const [draggedLead, setDraggedLead] = useState<Lead | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditingPipeline, setIsEditingPipeline] = useState(false);
   const [newStageName, setNewStageName] = useState('');
 
@@ -74,9 +74,9 @@ export const Pipeline: React.FC = () => {
             </button>
           </Tooltip>
           
-          <Tooltip content="إضافة فرصة بيعية جديدة" position="bottom">
+          <Tooltip content="إضافة فرصة بيعية جديدة (Alt + N)" position="bottom">
             <button 
-              onClick={() => setIsModalOpen(true)}
+              onClick={openAddLeadModal}
               className="flex items-center gap-2 bg-indigo-600/90 dark:bg-indigo-600/70 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl backdrop-blur-sm transition-all shadow-lg shadow-indigo-500/20 font-light text-sm"
             >
               <Plus size={18} />
@@ -231,8 +231,6 @@ export const Pipeline: React.FC = () => {
           )}
         </div>
       </div>
-      
-      <AddLeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

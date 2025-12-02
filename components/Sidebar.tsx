@@ -69,7 +69,7 @@ export const Sidebar: React.FC = () => {
 
         {/* User / Footer */}
         <div className="p-4 border-t border-white/10 dark:border-white/5 space-y-2">
-           <Tooltip content={theme === 'light' ? 'تفعيل الوضع الليلي' : 'تفعيل الوضع النهاري'} position="left" className="w-full">
+           <Tooltip content={theme === 'light' ? 'تفعيل الوضع الليلي (Alt + T)' : 'تفعيل الوضع النهاري (Alt + T)'} position="left" className="w-full">
              <button 
                onClick={toggleTheme}
                className="w-full flex items-center justify-center md:justify-start p-3 rounded-2xl hover:bg-white/20 dark:hover:bg-slate-800/50 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"

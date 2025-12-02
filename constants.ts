@@ -16,6 +16,7 @@ export const MOCK_LEADS: Lead[] = [
     phone: '+971 50 123 4567',
     value: 12500,
     stageId: 'new',
+    listId: '1',
     createdAt: '2023-10-01',
     avatarUrl: 'https://picsum.photos/200/200?random=1'
   },
@@ -27,6 +28,7 @@ export const MOCK_LEADS: Lead[] = [
     phone: '+971 50 987 6543',
     value: 45000,
     stageId: 'contacted',
+    listId: '1',
     createdAt: '2023-10-02',
     avatarUrl: 'https://picsum.photos/200/200?random=2'
   },
@@ -38,6 +40,7 @@ export const MOCK_LEADS: Lead[] = [
     phone: '+966 50 111 2222',
     value: 8200,
     stageId: 'proposal',
+    listId: '2',
     createdAt: '2023-10-03',
     avatarUrl: 'https://picsum.photos/200/200?random=3'
   },
@@ -49,6 +52,7 @@ export const MOCK_LEADS: Lead[] = [
     phone: '+966 50 333 4444',
     value: 120000,
     stageId: 'closed',
+    listId: '2',
     createdAt: '2023-09-28',
     avatarUrl: 'https://picsum.photos/200/200?random=4'
   },
@@ -60,6 +64,7 @@ export const MOCK_LEADS: Lead[] = [
     phone: '+971 50 555 6666',
     value: 5500,
     stageId: 'new',
+    listId: '3',
     createdAt: '2023-10-05',
     avatarUrl: 'https://picsum.photos/200/200?random=5'
   }

@@ -8,6 +8,7 @@ export interface Lead {
   phone: string;
   value: number;
   stageId: string;
+  listId?: string;
   avatarUrl?: string;
   createdAt: string;
 }

@@ -1,10 +1,62 @@
 import React from 'react';
 import { GlassCard } from '../components/GlassCard';
 import { MOCK_LISTS } from '../constants';
-import { FileUp, MoreVertical, Users, Clock } from 'lucide-react';
+import { FileUp, MoreVertical, Users, Clock, Download } from 'lucide-react';
 import { Tooltip } from '../components/Tooltip';
+import { useLeads } from '../context/LeadsContext';
+import { useToast } from '../context/ToastContext';
 
 export const Lists: React.FC = () => {
+  const { leads } = useLeads();
+  const { showToast } = useToast();
+
+  const handleExport = (listId: string, listTitle: string) => {
+    // Filter leads belonging to this list
+    const listLeads = leads.filter(l => l.listId === listId);
+
+    if (listLeads.length === 0) {
+      showToast('لا توجد بيانات لتصديرها في هذه القائمة', 'info');
+      return;
+    }
+
+    // Define CSV Headers
+    const headers = ['المعرف', 'الاسم', 'الشركة', 'البريد الإلكتروني', 'الهاتف', 'القيمة', 'المرحلة', 'تاريخ الإنشاء'];
+    
+    // Construct CSV Content (with BOM for Excel UTF-8 support)
+    const csvRows = [
+      headers.join(','),
+      ...listLeads.map(lead => {
+        // Escape quotes in strings
+        const name = `"${lead.name.replace(/"/g, '""')}"`;
+        const company = `"${lead.company.replace(/"/g, '""')}"`;
+        return [
+          lead.id,
+          name,
+          company,
+          lead.email,
+          lead.phone,
+          lead.value,
+          lead.stageId,
+          lead.createdAt
+        ].join(',');
+      })
+    ];
+
+    const csvContent = '\uFEFF' + csvRows.join('\n');
+    
+    // Create Blob and Download Link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${listTitle}_export.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast('تم تحميل القائمة بنجاح', 'success');
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       <header className="flex justify-between items-end">
@@ -29,9 +81,20 @@ export const Lists: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {MOCK_LISTS.map((list) => (
           <GlassCard key={list.id} hoverEffect className="p-6 relative">
-            <div className="absolute top-6 left-6">
+            <div className="absolute top-6 left-6 flex gap-2">
+               <Tooltip content="تصدير القائمة (CSV)" position="right">
+                 <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleExport(list.id, list.title);
+                  }}
+                  className="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                 >
+                   <Download size={18} />
+                 </button>
+               </Tooltip>
                <Tooltip content="خيارات القائمة" position="right">
-                 <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                 <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
                    <MoreVertical size={18} />
                  </button>
                </Tooltip>
