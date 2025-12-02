@@ -33,20 +33,25 @@ export const Leads: React.FC = () => {
 
     // 3. Value Filter
     const leadValue = Number(lead.value);
-    const min = minValue ? Number(minValue) : -Infinity;
-    const max = maxValue ? Number(maxValue) : Infinity;
+    // Handle potential NaN if user types incomplete number
+    const min = minValue && !isNaN(Number(minValue)) ? Number(minValue) : -Infinity;
+    const max = maxValue && !isNaN(Number(maxValue)) ? Number(maxValue) : Infinity;
     const matchesValue = leadValue >= min && leadValue <= max;
 
     // 4. Date Filter
-    // Assuming createdAt is YYYY-MM-DD string
     const leadDate = new Date(lead.createdAt);
-    // Set start date to beginning of day, end date to end of day if provided
+    // Reset time to ensure pure date comparison if needed, though usually string 'YYYY-MM-DD' parses to UTC midnight
+    // Input date is also YYYY-MM-DD.
+    
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
 
+    const isValidStart = start && !isNaN(start.getTime());
+    const isValidEnd = end && !isNaN(end.getTime());
+
     const matchesDate = 
-      (!start || leadDate >= start) && 
-      (!end || leadDate <= end);
+      (!isValidStart || leadDate >= start!) && 
+      (!isValidEnd || leadDate <= end!);
 
     return matchesSearch && matchesStage && matchesValue && matchesDate;
   });
@@ -63,6 +68,11 @@ export const Leads: React.FC = () => {
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ar-IQ', { style: 'currency', currency: 'IQD', maximumFractionDigits: 0 }).format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    return new Intl.DateTimeFormat('ar-IQ', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(dateString));
   };
 
   const clearFilters = () => {
@@ -290,7 +300,7 @@ export const Leads: React.FC = () => {
                   <div className="flex items-center justify-between pt-2 border-t border-slate-200/20 dark:border-slate-700/30">
                      <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
                        <Calendar size={12} />
-                       <span>{lead.createdAt}</span>
+                       <span>{formatDate(lead.createdAt)}</span>
                      </div>
                   </div>
                 </div>
@@ -332,7 +342,7 @@ export const Leads: React.FC = () => {
                       </td>
                       <td className="py-4 px-6 text-sm text-slate-700 dark:text-slate-200">{formatCurrency(lead.value)}</td>
                       <td className="py-4 px-6 text-sm text-slate-500 dark:text-slate-400 font-light">{lead.email}</td>
-                      <td className="py-4 px-6 text-xs text-slate-400 dark:text-slate-500 font-light">{lead.createdAt}</td>
+                      <td className="py-4 px-6 text-xs text-slate-400 dark:text-slate-500 font-light">{formatDate(lead.createdAt)}</td>
                       <td className="py-4 px-6 text-left">
                         <button className="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
                           <MoreHorizontal size={16} />
